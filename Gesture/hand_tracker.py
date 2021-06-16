@@ -44,6 +44,9 @@ class handDetector() :
                 # find integer position of the points
                 h, w, c = frame.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
+                lm = [id, cx, cy]
+
+                lmlist.append(lm)
 
                 if id == 0:
                     cv2.circle(frame, (cx, cy), 15, (255, 255, 0), cv2.FILLED)
