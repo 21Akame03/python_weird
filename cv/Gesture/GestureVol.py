@@ -5,7 +5,7 @@ import hand_tracker as htm
 
 
 # ############
-Wcam, Hcam = 640, 480
+Wcam, Hcam = 1280, 720
 # ############
 
 #  Hand tracking software for volume control
@@ -14,7 +14,7 @@ Wcam, Hcam = 640, 480
 cap = cv2.VideoCapture(0)
 cap.set(3, Wcam)
 cap.set(4, Hcam)
-detector = htm.handDetector(detector_confidence = 0.7)
+detector = htm.handDetector(detector_confidence = 0.6)
 
 # fps
 PreviousTime = 0
@@ -33,7 +33,7 @@ while  True:
 
         
         # get the length and midpoint of 2 landmarks
-        length, midpoint = detector.distanceBetween2Lm(frame, lmlist, 4, 8, False)
+        length, midpoint = detector.distanceBetween2Lm(frame, 4, 8, False)
 
 
         # max about 200 and min about 15

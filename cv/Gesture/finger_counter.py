@@ -14,6 +14,7 @@ cap.set(4, HCam)
 
 while True:
     success, frame = cap.read()
+    detector = htm.handDetector()
 
 
 
