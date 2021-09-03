@@ -5,4 +5,4 @@ def triangle(number) :
     print("*"*number)
     return triangle(number - 1)
 
-triangle(10)
+triangle(100)

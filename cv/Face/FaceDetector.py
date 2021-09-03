@@ -13,11 +13,9 @@ class FaceDetector() :
 
 
     def find_face_mesh(self, frame, draw=False) :
-        found = False
-
         # process image into RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
+
         # apply the model using the api
         result = self.face_mesh.process(image)
         
@@ -26,9 +24,8 @@ class FaceDetector() :
             if result.multi_face_landmarks:
                 for lm in result.multi_face_landmarks:
                     self.mpDraw.draw_landmarks(frame, lm, self.mpFace_mesh.FACE_CONNECTIONS, self.drawSpec, self.drawSpec)
-                    found = True
-
-        return frame, found
+        
+        return frame
 
     
        
@@ -41,18 +38,17 @@ def main() :
     
     # mediapipe detector
     detector = FaceDetector()
+    
+    run = True
 
-    while True:
+    while run == True:
         success, frame = cap.read()
     
         # reassign the frame with the modified image
-        frame, found = detector.find_face_mesh(cv2.flip(frame, 1), True)
-        
-        cv2.putText(frame, f"Found : {found}", (50, 50), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (255, 255, 255), 1)
-    
-            
+        frame = detector.find_face_mesh(frame)
 
-        cv2.imshow("Face_mesh", frame)
+
+        cv2.imshow("Face_mesh",cv2.flip(frame, 1))
         cv2.waitKey(1)
 
 

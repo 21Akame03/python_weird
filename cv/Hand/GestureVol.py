@@ -14,7 +14,7 @@ Wcam, Hcam = 1280, 720
 cap = cv2.VideoCapture(0)
 cap.set(3, Wcam)
 cap.set(4, Hcam)
-detector = htm.handDetector(detector_confidence = 0.6)
+detector = htm.handDetector(detector_confidence = 0.7, max_hands=1)
 
 # fps
 PreviousTime = 0
@@ -23,7 +23,8 @@ currentTime = 0
 prevvol = 0
 while  True:
     success, frame = cap.read()
-
+    
+    frame = cv2.flip(frame, 1)
     # get the frame and detect the hand 
     frame = detector.findHands(frame)
     lmlist = detector.findposition(frame, draw=False)

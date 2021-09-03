@@ -5,7 +5,6 @@ import math
 
 
 class handDetector() :
-
     def __init__(self, mode = False, max_hands = 2, detector_confidence = 0.5, track_confidence = 0.5):
         self.mode = mode
         self.max_hands = max_hands
@@ -18,8 +17,12 @@ class handDetector() :
 
         # drawing of points
         self.mpDraw = mp.solutions.drawing_utils
-
+        
+        # Finger tip landmark ids
+        # thumb, index, middle, ring, pinky
+        self.tipIds = [4, 8, 12, 16, 20]
     
+
     def findHands(self, frame, draw=True) :
         imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -66,9 +69,9 @@ class handDetector() :
                 #      cv2.circle(frame, (cx, cy), 15, (255, 255, 0), cv2.FILLED)
                 #  else:
                 #      cv2.circle(frame, (cx, cy), 5, (245, 25, 15), cv2.FILLED) 
-#  
                 
         return self.lmlist
+
     
     # find the disance between 2 landmark numbers provided by the arguments
     def distanceBetween2Lm(self, frame, Lm1, Lm2, Draw=False) :
@@ -94,10 +97,35 @@ class handDetector() :
 
         return length, midpoint
 
-  #    # find which fingers and how many are up 
-    #  def find_fingers_up(self, frame, lmlist, draw=False) :
-    #      
-#  
+
+    #find which fingers and how many are up 
+    def find_fingers_up(self) :
+        fingers = []
+       
+        # thumb 
+        # check if the tip landmark is lower than the previous landmark
+        if self.lmlist[self.tipIds[0]][1] > self.lmlist[self.tipIds[0] - 1][1]:
+            fingers.append(True)
+        else:
+            fingers.append(False)
+
+        # every other fingers
+        for id in range(1, 4):
+            if self.lmlist[self.tipIds[id]][1] > self.lmlist[self.tipIds[id] - 2][1]:
+                fingers.append(True)
+            else:
+                fingers.append(False)
+        
+        # thumb 
+        # check if the tip landmark is lower than the previous landmark
+        if self.lmlist[self.tipIds[4]][1] > self.lmlist[self.tipIds[4] - 1][1]:
+            fingers.append(True)
+        else:
+            fingers.append(False)
+
+        
+        return fingers
+
 
 
 def main():
