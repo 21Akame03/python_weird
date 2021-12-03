@@ -46,7 +46,7 @@ class NetCat:
                     if recv_len < 4096:
                         break
 
-                if reponse:
+                if response:
                     print(response)
                     buffer = input('> ')
                     buffer += '\n'
