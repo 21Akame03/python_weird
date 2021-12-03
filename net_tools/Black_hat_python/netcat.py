@@ -6,7 +6,7 @@ import sys
 import textwrap
 import threading
 
-
+# execute cmd string on local machine
 def execute(cmd):
     cmd = cmd.strip()
     if not cmd:
@@ -86,12 +86,18 @@ class NetCat:
             client_socket.send(message.encode())
 
         elif self.args.command:
-            cmd_buffer = 'b'
+            # cmd_buffer is binary
+            cmd_buffer = b''
             while True:
                 try:
+                    # send terminal interface to client
                     client_socket.send(b'NC #> ')
+
+                    # if there is no new line
                     while '\n' not in cmd_buffer.decode():
+                        # receives data from the target
                         cmd_buffer += client_socket.recv(64)
+
                     response = execute(cmd_buffer.decode())
                     if response:
                         client_socket.send(response.encode())
@@ -103,12 +109,18 @@ class NetCat:
 
 
 if __name__ == '__main__':
+    # get own ip address
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+
+
+    # works in default as target machine
     parser = argparse.ArgumentParser(description='NET TOOL', formatter_class=argparse.RawDescriptionHelpFormatter, epilog=textwrap.dedent('''Example: netcat.py -t 192.168.1.108 -p 5555 -l -c # command shell \nnetcat.py -t 192.168.1.108 -p 5555 -l -u=mytest.txt # upload to file \nnetcat.py -t 192.168.1.108 -p 5555 -l -e=\"cat /etc/passwd\" # execute command \necho 'ABC' | ./netcat.py -t 192.168.1.108 -p 135 # echo text to server port 135 \nnetcat.py -t 192.168.1.108 -p 5555 # connect to server'''))
     parser.add_argument('-c', '--command', action='store_true', help='command shell')
     parser.add_argument('-e', '--execute', help='execute specified command')
     parser.add_argument('-l', '--listen', action='store_true', help='listen')
     parser.add_argument('-p', '--port', type=int, default=5555, help='specified port')
-    parser.add_argument('-t', '--target', default='192.168.1.203', help='specified IP')
+    parser.add_argument('-t', '--target', default=f'{local_ip}', help='specified IP')
     parser.add_argument('-u', '--upload', help='upload file')
     args = parser.parse_args()
     
